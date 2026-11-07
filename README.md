@@ -47,7 +47,7 @@ would be necessary for stronger generalization claims.
 
 ## c. GitHub repository
 
-**GitHub repository:** https://github.com/2026aj05147/breast-cancer-classifier-lab
+**GitHub repository:** https://github.com/2026aj05147/ml-assignment-2-breast-cancer-classification
 
 **Live Streamlit app:** pending deployment; insert the verified app URL here.
 
