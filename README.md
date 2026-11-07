@@ -55,6 +55,7 @@ would be necessary for stronger generalization claims.
 
 ```text
 app.py                         Streamlit upload/evaluation interface
+.streamlit/config.toml         Streamlit color theme
 evaluation.py                  Shared metrics and strict CSV validation
 train.py                       Reproducible training on the bundled UCI data
 requirements.txt               Versions matching the saved model environment
@@ -133,7 +134,9 @@ labeled holdout. The app only loads saved pipelines.
 1. Download the held-out example using the sidebar button.
 2. Upload that CSV using the labeled-data uploader.
 3. Choose each of the five classifiers from the dropdown.
-4. Inspect all six metrics, the confusion matrix and classification report.
+4. Inspect all six metrics, the confusion matrix, classification report, data
+   preview and recorded holdout comparison in the results tabs. The recorded
+   comparison uses the supplied holdout, even if a different CSV is uploaded.
 5. For another CSV, keep the exact feature schema and include both target
    classes. Missing columns, unexpected columns, nonnumeric/nonfinite
    measurements and invalid labels produce visible errors.

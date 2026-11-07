@@ -38,6 +38,10 @@ def test_saved_pipeline_and_app(monkeypatch, name, filename):
     assert not app.exception
     assert not app.error
     assert len(app.metric) == 6
+    assert [tab.label for tab in app.tabs] == [
+        "Confusion matrix", "Classification report", "Data preview",
+        "Holdout comparison",
+    ]
     for metric in app.metric:
         assert float(metric.value) == pytest.approx(metrics[metric.label], abs=0.000051)
 
@@ -71,6 +75,8 @@ def test_app_without_upload():
     assert not app.exception
     assert len(app.selectbox[0].options) == 5
     assert len(app.dataframe) == 1
+    assert len(app.warning) == 0
+    assert any("not validated for clinical" in caption.value for caption in app.caption)
 
 
 def test_app_shows_invalid_csv_error(monkeypatch):
