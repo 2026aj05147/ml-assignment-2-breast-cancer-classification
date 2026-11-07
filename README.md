@@ -59,7 +59,7 @@ app.py                         Streamlit upload/evaluation interface
 evaluation.py                  Shared metrics and strict CSV validation
 train.py                       Reproducible training on the bundled UCI data
 requirements.txt               Versions matching the saved model environment
-README.md                      Experiment report and submission instructions
+README.md                      Experiment report and usage instructions
 test_data.csv                  114 labeled holdout rows
 model/
     logistic.joblib            StandardScaler + LogisticRegression
@@ -145,30 +145,6 @@ labeled holdout. The app only loads saved pipelines.
 Single-class uploads cannot produce ROC AUC, so the app rejects them rather
 than presenting a misleading score.
 
-## Deploy on Streamlit Community Cloud
+## AI assistance
 
-Push the complete project, including `model/` and `test_data.csv`, to the
-student's own repository. Select its branch and `app.py` entrypoint; under
-**Advanced settings**, choose **Python 3.12** before deployment.
-
-Do not use the default Python 3.14 runtime with these saved models and pinned
-dependencies. For an existing app on a different Python version, record its
-settings, then delete and redeploy it with Python 3.12. A reboot does not change
-the Python runtime.
-
-After deployment, verify the CSV upload workflow with all five models, not just
-the initial page, and replace the pending links above.
-
-## Submission and authorship checklist
-
-- Add the actual GitHub and deployed-app URLs.
-- Run the assignment in BITS Virtual Lab and capture the required screenshot.
-- Assemble a single PDF in the required order: GitHub URL, live app URL,
-  Virtual Lab screenshot, then the full README.
-- Check the course rules on AI assistance and collaboration. This starter was
-  created with AI assistance; acknowledge that assistance wherever required.
-- The submitting student should review the code, reproduce the measurements
-  and write their own interpretation based on what they understand.
-- This is not a renamed copy of the bank-marketing project, but a different
-  dataset or layout cannot guarantee originality-check acceptance. Do not
-  fabricate authorship or commit history.
+This project was created with AI assistance.
