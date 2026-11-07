@@ -37,6 +37,7 @@ def test_saved_pipeline_and_app(monkeypatch, name, filename):
     app = AppTest.from_file(str(ROOT / "app.py")).run(timeout=30)
     assert not app.exception
     assert not app.error
+    assert "Model evaluation" in [heading.value for heading in app.subheader]
     assert len(app.metric) == 6
     assert [tab.label for tab in app.tabs] == [
         "Confusion matrix", "Classification report", "Data preview",
@@ -95,6 +96,7 @@ def test_compare_all_models_on_uploaded_data(monkeypatch):
     app = AppTest.from_file(str(ROOT / "app.py")).run()
     app.checkbox[0].set_value(True).run()
     assert not app.exception
+    assert "Results on uploaded CSV" in [heading.value for heading in app.subheader]
     expected = pd.read_csv(ROOT / "results" / "comparison.csv").round(4)
     comparison = app.dataframe[-2].value
     pd.testing.assert_frame_equal(comparison, expected)

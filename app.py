@@ -106,7 +106,7 @@ def main() -> None:
         st.info(
             "To evaluate a model: download the example CSV, upload it in the "
             "sidebar, and select a classifier. Choose the comparison option "
-            "to evaluate all five models on your uploaded data."
+            "to evaluate all five models on the uploaded data."
         )
         st.subheader("Recorded holdout results")
         st.write("Performance metrics for each trained classifier.")
@@ -121,7 +121,7 @@ def main() -> None:
         return
     metrics, predictions = score_pipeline(pipeline, features, labels)
     st.divider()
-    st.subheader("Your evaluation")
+    st.subheader("Model evaluation")
     st.write(
         f"**{choice}** | {len(features):,} cases | "
         f"{int((labels == 0).sum()):,} benign | "
@@ -182,7 +182,7 @@ def main() -> None:
                     )
                     model_metrics, _ = score_pipeline(model, model_features, model_labels)
                     rows.append({"ML Model Name": name, **model_metrics})
-            st.subheader("Results on your uploaded CSV")
+            st.subheader("Results on uploaded CSV")
             st.caption(
                 f"All five models evaluated on the same {len(frame):,} uploaded cases."
             )
