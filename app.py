@@ -43,7 +43,7 @@ def main() -> None:
     st.markdown(
         """
         <style>
-        .block-container {padding-top: 2rem; padding-bottom: 3rem;}
+        .block-container {padding-top: 5rem; padding-bottom: 3rem;}
         [data-testid="stSidebar"] {border-right: 1px solid #e8e4f2;}
         [data-testid="stMetric"] {
             background: #f7f5ff;
