@@ -144,7 +144,3 @@ labeled holdout. The app only loads saved pipelines.
 
 Single-class uploads cannot produce ROC AUC, so the app rejects them rather
 than presenting a misleading score.
-
-## AI assistance
-
-This project was created with AI assistance.
