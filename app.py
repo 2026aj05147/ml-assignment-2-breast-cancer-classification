@@ -109,7 +109,7 @@ def main() -> None:
             "to evaluate all five models on your uploaded data."
         )
         st.subheader("Recorded holdout results")
-        st.write("The six assignment metrics for each trained classifier.")
+        st.write("Performance metrics for each trained classifier.")
         comparison_table()
         return
     pipeline = saved_pipeline(CLASSIFIERS[choice])
