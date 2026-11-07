@@ -1,0 +1,22 @@
+{
+  "dataset": "UCI Breast Cancer Wisconsin (Diagnostic), sklearn bundled copy",
+  "source": "https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic",
+  "rows": 569,
+  "features": 30,
+  "class_counts": {
+    "benign": 357,
+    "malignant": 212
+  },
+  "training_rows": 455,
+  "test_rows": 114,
+  "seed": 17,
+  "positive_class": "1 = malignant",
+  "versions": {
+    "python": "3.12.7",
+    "scikit-learn": "1.5.1",
+    "numpy": "1.26.4",
+    "pandas": "2.2.2",
+    "scipy": "1.13.1",
+    "joblib": "1.4.2"
+  }
+}

@@ -1,0 +1,9 @@
+# Deploy with Python 3.12 to match the saved pipelines.
+joblib==1.4.2
+matplotlib==3.9.2
+numpy==1.26.4
+pandas==2.2.2
+scikit-learn==1.5.1
+scipy==1.13.1
+streamlit==1.37.1
+pytest==7.4.4
