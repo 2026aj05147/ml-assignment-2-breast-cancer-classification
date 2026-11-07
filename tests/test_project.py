@@ -76,7 +76,6 @@ def test_app_without_upload():
     assert len(app.selectbox[0].options) == 5
     assert len(app.dataframe) == 1
     assert len(app.warning) == 0
-    assert any("not medical decisions" in caption.value for caption in app.caption)
     assert all("—" not in caption.value for caption in app.caption)
 
 

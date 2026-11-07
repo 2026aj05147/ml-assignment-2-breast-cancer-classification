@@ -61,7 +61,6 @@ def main() -> None:
         "Explore and compare five classifiers on the Wisconsin Breast Cancer "
         "Diagnostic dataset."
     )
-    st.caption("For coursework, not medical decisions.")
     with st.sidebar:
         st.header("Get started")
         st.markdown("**1. Download the example data**")
