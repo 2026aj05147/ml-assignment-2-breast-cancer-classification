@@ -33,9 +33,7 @@ def main() -> None:
         "Compare five machine learning models using the Wisconsin Breast Cancer "
         "Diagnostic dataset."
     )
-    st.caption(
-        "Educational benchmark only — not validated for clinical diagnosis or treatment."
-    )
+    st.caption("For coursework, not medical decisions.")
     with st.sidebar:
         st.header("Get started")
         st.markdown("**1. Download the example data**")
