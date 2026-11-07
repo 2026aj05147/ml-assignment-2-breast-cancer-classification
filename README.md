@@ -134,9 +134,10 @@ labeled holdout. The app only loads saved pipelines.
 1. Download the held-out example using the sidebar button.
 2. Upload that CSV using the labeled-data uploader.
 3. Choose each of the five classifiers from the dropdown.
-4. Inspect all six metrics, the confusion matrix, classification report, data
-   preview and recorded holdout comparison in the results tabs. The recorded
-   comparison uses the supplied holdout, even if a different CSV is uploaded.
+4. Inspect all six metrics, confusion-matrix counts, classification report,
+   data preview and model comparison in the results tabs. Enable **Compare all
+   models on this CSV** to evaluate all five on the uploaded data. The separate
+   recorded comparison always uses the supplied holdout.
 5. For another CSV, keep the exact feature schema and include both target
    classes. Missing columns, unexpected columns, nonnumeric/nonfinite
    measurements and invalid labels produce visible errors.

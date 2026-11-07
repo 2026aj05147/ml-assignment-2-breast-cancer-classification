@@ -40,7 +40,7 @@ def test_saved_pipeline_and_app(monkeypatch, name, filename):
     assert len(app.metric) == 6
     assert [tab.label for tab in app.tabs] == [
         "Confusion matrix", "Classification report", "Data preview",
-        "Holdout comparison",
+        "Model comparison",
     ]
     for metric in app.metric:
         assert float(metric.value) == pytest.approx(metrics[metric.label], abs=0.000051)
@@ -86,6 +86,19 @@ def test_app_shows_invalid_csv_error(monkeypatch):
     assert not app.exception
     assert len(app.error) == 1
     assert len(app.metric) == 0
+
+
+def test_compare_all_models_on_uploaded_data(monkeypatch):
+    frame = pd.read_csv(ROOT / "test_data.csv")
+    monkeypatch.setattr(
+        st, "file_uploader", lambda *args, **kwargs: BytesIO(frame.to_csv(index=False).encode())
+    )
+    app = AppTest.from_file(str(ROOT / "app.py")).run()
+    app.checkbox[0].set_value(True).run()
+    assert not app.exception
+    expected = pd.read_csv(ROOT / "results" / "comparison.csv").round(4)
+    comparison = app.dataframe[-2].value
+    pd.testing.assert_frame_equal(comparison, expected)
 
 
 def test_holdout_and_scaler_use_the_documented_split():

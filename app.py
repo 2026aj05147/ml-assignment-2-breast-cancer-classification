@@ -19,6 +19,18 @@ from evaluation import CLASSIFIERS, score_pipeline, validate_upload
 ROOT = Path(__file__).resolve().parent
 
 
+def comparison_table() -> None:
+    st.caption(
+        "Recorded on the provided holdout split; these values do not change "
+        "when a different CSV is uploaded."
+    )
+    st.dataframe(
+        pd.read_csv(ROOT / "results" / "comparison.csv").round(4),
+        hide_index=True,
+        use_container_width=True,
+    )
+
+
 @st.cache_resource
 def saved_pipeline(filename: str) -> Pipeline:
     return joblib.load(ROOT / "model" / filename)
@@ -28,9 +40,25 @@ def main() -> None:
     st.set_page_config(
         page_title="Diagnostic Classifier Studio", page_icon="🔬", layout="wide"
     )
+    st.markdown(
+        """
+        <style>
+        .block-container {padding-top: 2rem; padding-bottom: 3rem;}
+        [data-testid="stSidebar"] {border-right: 1px solid #e8e4f2;}
+        [data-testid="stMetric"] {
+            background: #f7f5ff;
+            border: 1px solid #eae5fb;
+            border-radius: 12px;
+            padding: 1rem;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.caption("MACHINE LEARNING ASSIGNMENT 2")
     st.title("🔬 Diagnostic Classifier Studio")
     st.write(
-        "Compare five machine learning models using the Wisconsin Breast Cancer "
+        "Explore and compare five classifiers on the Wisconsin Breast Cancer "
         "Diagnostic dataset."
     )
     st.caption("For coursework, not medical decisions.")
@@ -48,6 +76,10 @@ def main() -> None:
         upload = st.file_uploader("Test data CSV", type=["csv"])
         st.markdown("**3. Select a model**")
         choice = st.selectbox("Classifier", list(CLASSIFIERS))
+        compare_uploaded = st.checkbox(
+            "Compare all models on this CSV",
+            help="Evaluate each saved pipeline on the uploaded labeled data.",
+        )
         st.divider()
         with st.expander("CSV requirements"):
             st.write(
@@ -59,25 +91,27 @@ def main() -> None:
             "Models are pre-trained; the app evaluates them without retraining."
         )
     if upload is None:
-        st.subheader("Explore the benchmark")
-        st.write(
-            "**569** samples · **30** features · **5** classifiers · "
-            "**114** held-out test cases"
+        st.divider()
+        st.subheader("Dataset at a glance")
+        for column, label, value in zip(
+            st.columns(4),
+            ("Samples", "Features", "Classifiers", "Holdout cases"),
+            ("569", "30", "5", "114"),
+            strict=True,
+        ):
+            column.metric(label, value)
+        st.caption(
+            "Two classes: benign (0) and malignant (1). "
+            "The same stratified 80/20 split is used for all five models."
         )
         st.info(
-            "Start by downloading the example CSV, uploading it in the sidebar, "
-            "and choosing a classifier."
+            "To evaluate a model: download the example CSV, upload it in the "
+            "sidebar, and select a classifier. Choose the comparison option "
+            "to evaluate all five models on your uploaded data."
         )
         st.subheader("Recorded holdout results")
-        st.caption(
-            "All models were evaluated on the same held-out split. "
-            "Precision, recall and F1 use malignant as the positive class."
-        )
-        st.dataframe(
-            pd.read_csv(ROOT / "results" / "comparison.csv").round(4),
-            hide_index=True,
-            use_container_width=True,
-        )
+        st.write("The six assignment metrics for each trained classifier.")
+        comparison_table()
         return
     pipeline = saved_pipeline(CLASSIFIERS[choice])
     try:
@@ -87,8 +121,13 @@ def main() -> None:
         st.error(f"Cannot evaluate this CSV: {error}")
         return
     metrics, predictions = score_pipeline(pipeline, features, labels)
-    st.subheader("Evaluation results")
-    st.write(f"**{choice}** · {len(features):,} uploaded cases")
+    st.divider()
+    st.subheader("Your evaluation")
+    st.write(
+        f"**{choice}** | {len(features):,} cases | "
+        f"{int((labels == 0).sum()):,} benign | "
+        f"{int((labels == 1).sum()):,} malignant"
+    )
     st.caption(
         "Positive class: malignant (1). The saved preprocessing and model "
         "are applied without retraining."
@@ -106,13 +145,20 @@ def main() -> None:
             column.metric(name, f"{value:.4f}", help=help_text[name])
 
     matrix_tab, report_tab, data_tab, comparison_tab = st.tabs(
-        ["Confusion matrix", "Classification report", "Data preview", "Holdout comparison"]
+        ["Confusion matrix", "Classification report", "Data preview", "Model comparison"]
     )
     with matrix_tab:
+        matrix = confusion_matrix(labels, predictions, labels=[0, 1])
         st.caption("Rows are actual classes; columns are predicted classes.")
+        st.write(
+            f"**Correct benign:** {matrix[0, 0]:,}  |  "
+            f"**Correct malignant:** {matrix[1, 1]:,}  |  "
+            f"**False positives:** {matrix[0, 1]:,}  |  "
+            f"**False negatives:** {matrix[1, 0]:,}"
+        )
         figure, axis = plt.subplots(figsize=(5, 4))
         ConfusionMatrixDisplay(
-            confusion_matrix(labels, predictions, labels=[0, 1]),
+            matrix,
             display_labels=["Benign (0)", "Malignant (1)"],
         ).plot(ax=axis, cmap="Purples", colorbar=False)
         st.pyplot(figure, use_container_width=False)
@@ -127,15 +173,27 @@ def main() -> None:
         st.caption(f"Showing the first {min(len(frame), 20)} of {len(frame):,} uploaded rows.")
         st.dataframe(frame.head(20), hide_index=True, use_container_width=True)
     with comparison_tab:
-        st.caption(
-            "These are the recorded results on the provided holdout, not "
-            "necessarily the uploaded data."
-        )
-        st.dataframe(
-            pd.read_csv(ROOT / "results" / "comparison.csv").round(4),
-            hide_index=True,
-            use_container_width=True,
-        )
+        if compare_uploaded:
+            with st.spinner("Evaluating all five models on the uploaded CSV..."):
+                rows = []
+                for name, filename in CLASSIFIERS.items():
+                    model = saved_pipeline(filename)
+                    model_features, model_labels = validate_upload(
+                        frame, list(model.feature_names_in_)
+                    )
+                    model_metrics, _ = score_pipeline(model, model_features, model_labels)
+                    rows.append({"ML Model Name": name, **model_metrics})
+            st.subheader("Results on your uploaded CSV")
+            st.caption(
+                f"All five models evaluated on the same {len(frame):,} uploaded cases."
+            )
+            st.dataframe(
+                pd.DataFrame(rows).round(4), hide_index=True, use_container_width=True
+            )
+        else:
+            st.info("Enable 'Compare all models on this CSV' in the sidebar for a custom comparison.")
+        st.subheader("Original holdout benchmark")
+        comparison_table()
 
 
 if __name__ == "__main__":
