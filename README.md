@@ -49,33 +49,10 @@ would be necessary for stronger generalization claims.
 
 **GitHub repository:** https://github.com/2026aj05147/ml-assignment-2-breast-cancer-classification
 
-**Live Streamlit app:** https://2026aj05147-ml-assignment.streamlit.app
+**Live Streamlit app:** https://2026aj05147-ml-assignment.streamlit.app/
 
-### Repository layout
-
-```text
-app.py                         Streamlit upload/evaluation interface
-.streamlit/config.toml         Streamlit color theme
-evaluation.py                  Shared metrics and strict CSV validation
-train.py                       Reproducible training on the bundled UCI data
-requirements.txt               Versions matching the saved model environment
-README.md                      Experiment report and usage instructions
-test_data.csv                  114 labeled holdout rows
-model/
-    logistic.joblib            StandardScaler + LogisticRegression
-    tree.joblib                StandardScaler + DecisionTreeClassifier
-    neighbors.joblib           StandardScaler + KNeighborsClassifier
-    bayes.joblib               StandardScaler + GaussianNB
-    svm.joblib                 StandardScaler + SVC
-results/
-    comparison.csv             Six measured metrics for each model
-    training_metadata.json     Dataset counts, split seed and runtime versions
-tests/
-    test_project.py            Artifact, upload-validation and app tests
-```
-
-The preprocessing artifacts are embedded in each saved pipeline; do not scale
-uploaded data separately or fit a new scaler in the app.
+The repository includes the application, source code, pinned requirements,
+test CSV and five saved models. Each saved pipeline contains its fitted scaler.
 
 ## d. Models used and comparison
 
@@ -112,7 +89,7 @@ for SVM, continuous decision scores. MCC uses the predicted binary labels.
 | Support Vector Machine | The RBF SVM shares the best hard-prediction metrics with KNN and has a higher AUC (0.9947 versus 0.9797). It misses 3 malignant samples with no false positives on this holdout; that does not guarantee perfect precision on new cases. |
 | **Overall, Winner for your dataset?** | **SVM, with KNN explicitly tied on all five hard-prediction metrics.** SVM is selected using AUC as the tie-breaker. Logistic Regression is the AUC-only winner. None of these models eliminates false negatives, and the small holdout does not justify a clinical-use recommendation. |
 
-## Reproduce the experiment
+## Run the application
 
 Use **Python 3.12**. Saved scikit-learn pipelines are not supported across
 arbitrary library versions; the pinned dependencies match the training runtime.
@@ -121,29 +98,15 @@ arbitrary library versions; the pinned dependencies match the training runtime.
 python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
-python train.py
-python -m pytest -q
-streamlit run app.py
+python -m streamlit run app.py
 ```
 
-Training regenerates all five pipelines, the comparison CSV, metadata and
-labeled holdout. The app only loads saved pipelines.
-If an existing environment reports a PyArrow/NumPy version conflict, reinstall
-the pinned requirements with `python -m pip install -r requirements.txt`.
+Download the provided holdout from the sidebar and upload it for evaluation.
+Select a classifier to view its six metrics, confusion matrix and
+classification report, or use the comparison option to evaluate all five.
+The matrix uses actual classes as rows and predicted classes as columns;
+malignant (1) is positive. The app loads saved pipelines without retraining.
 
-## App walkthrough
-
-1. Download the held-out test data using the sidebar button.
-2. Upload that CSV using the labeled-data uploader.
-3. Choose each of the five classifiers from the dropdown.
-4. Inspect all six metrics, the confusion matrix and classification report
-   together. In the matrix, rows are actual classes, columns are predictions,
-   and malignant (1) is positive. Open the data preview or recorded holdout
-   benchmark for more detail. Enable **Compare all models on this CSV** to
-   evaluate all five on the uploaded data.
-5. For another CSV, keep the exact feature schema and include both target
-   classes. Missing columns, unexpected columns, nonnumeric/nonfinite
-   measurements and invalid labels produce visible errors.
-
-Single-class uploads cannot produce ROC AUC, so the app rejects them rather
-than presenting a misleading score.
+Other test CSVs must use the same 30 feature names and include the `malignant`
+target with both classes; a single-class file cannot produce ROC AUC.
+To reproduce training and regenerate the artifacts, run `python train.py`.
