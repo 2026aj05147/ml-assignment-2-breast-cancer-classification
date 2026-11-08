@@ -118,7 +118,7 @@ Use **Python 3.12**. Saved scikit-learn pipelines are not supported across
 arbitrary library versions; the pinned dependencies match the training runtime.
 
 ```bash
-python3 -m venv .venv
+python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
 python train.py
@@ -128,6 +128,8 @@ streamlit run app.py
 
 Training regenerates all five pipelines, the comparison CSV, metadata and
 labeled holdout. The app only loads saved pipelines.
+If an existing environment reports a PyArrow/NumPy version conflict, reinstall
+the pinned requirements with `python -m pip install -r requirements.txt`.
 
 ## App walkthrough
 
