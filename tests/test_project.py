@@ -10,7 +10,7 @@ import pandas as pd
 import pytest
 from sklearn.datasets import load_breast_cancer
 from sklearn.exceptions import InconsistentVersionWarning
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.model_selection import train_test_split
 import streamlit as st
 from streamlit.testing.v1 import AppTest
@@ -40,10 +40,24 @@ def test_saved_pipeline_and_app(monkeypatch, name, filename):
     assert not app.error
     assert "Model evaluation" in [heading.value for heading in app.subheader]
     assert len(app.metric) == 6
-    assert [tab.label for tab in app.tabs] == [
-        "Confusion matrix", "Classification report", "Data preview",
-        "Model comparison",
-    ]
+    assert not app.tabs
+    assert {"Confusion matrix", "Classification report"} <= {
+        heading.value for heading in app.subheader
+    }
+    matrix = confusion_matrix(labels, predictions, labels=[0, 1])
+    matrix_html = next(item.value for item in app.markdown if 'class="matrix-table"' in item.value)
+    benign_row = (
+        f'<tr><th scope="row">Benign (0)</th>'
+        f'<td><strong>{matrix[0, 0]:,}</strong><span>True negative (TN)</span></td>'
+        f'<td><strong>{matrix[0, 1]:,}</strong><span>False positive (FP)</span></td></tr>'
+    )
+    malignant_row = (
+        f'<tr><th scope="row">Malignant (1)</th>'
+        f'<td><strong>{matrix[1, 0]:,}</strong><span>False negative (FN)</span></td>'
+        f'<td><strong>{matrix[1, 1]:,}</strong><span>True positive (TP)</span></td></tr>'
+    )
+    assert benign_row in matrix_html
+    assert malignant_row in matrix_html
     for metric in app.metric:
         assert float(metric.value) == pytest.approx(metrics[metric.label], abs=0.000051)
     report = classification_report(
@@ -109,7 +123,7 @@ def test_compare_all_models_on_uploaded_data(monkeypatch):
     assert not app.exception
     assert "Results on uploaded CSV" in [heading.value for heading in app.subheader]
     expected = pd.read_csv(ROOT / "results" / "comparison.csv").round(4)
-    comparison = app.dataframe[-2].value
+    comparison = app.dataframe[1].value
     pd.testing.assert_frame_equal(comparison, expected)
 
 
