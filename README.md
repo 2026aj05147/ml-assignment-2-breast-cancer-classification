@@ -87,7 +87,7 @@ for SVM, continuous decision scores. MCC uses the predicted binary labels.
 | K-Nearest Neighbors | Ties SVM on accuracy, precision, recall, F1 and MCC: 3 false negatives and no false positives. AUC is lower than SVM's, showing that identical hard-prediction metrics need not imply identical ranking performance. Scaling prevents large-valued features such as area from dominating distances. |
 | Gaussian Naive Bayes | AUC is strong (0.9927), but its default decisions miss 4 malignant samples and falsely flag 2 benign samples. Its lowest MCC (0.8864) and lower precision distinguish it from the other models. Correlated measurement summaries make conditional independence a simplifying assumption, not an established property of this dataset. |
 | Support Vector Machine | The RBF SVM shares the best hard-prediction metrics with KNN and has a higher AUC (0.9947 versus 0.9797). It misses 3 malignant samples with no false positives on this holdout; that does not guarantee perfect precision on new cases. |
-| **Overall, Winner for your dataset?** | **SVM, with KNN explicitly tied on all five hard-prediction metrics.** SVM is selected using AUC as the tie-breaker. Logistic Regression is the AUC-only winner. None of these models eliminates false negatives, and the small holdout does not justify a clinical-use recommendation. |
+| **Overall, Winner for your dataset?** | SVM is selected as the overall winner because it achieves the highest accuracy, precision, recall, F1 and MCC (tied with KNN), while achieving a higher AUC than KNN. Logistic Regression also ties for highest recall and has the highest AUC overall. The preferred model depends on the evaluation metric prioritized. |
 
 ## Run the application
 
