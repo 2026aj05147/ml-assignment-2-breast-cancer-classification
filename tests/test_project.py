@@ -10,6 +10,7 @@ import pandas as pd
 import pytest
 from sklearn.datasets import load_breast_cancer
 from sklearn.exceptions import InconsistentVersionWarning
+from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 import streamlit as st
 from streamlit.testing.v1 import AppTest
@@ -45,6 +46,16 @@ def test_saved_pipeline_and_app(monkeypatch, name, filename):
     ]
     for metric in app.metric:
         assert float(metric.value) == pytest.approx(metrics[metric.label], abs=0.000051)
+    report = classification_report(
+        labels, predictions, labels=[0, 1], target_names=["Benign", "Malignant"],
+        output_dict=True, zero_division=0,
+    )
+    del report["accuracy"]
+    expected_report = pd.DataFrame.from_dict(report, orient="index").round(4)
+    expected_report.index.name = "Class or average"
+    expected_report["support"] = expected_report["support"].astype(int)
+    pd.testing.assert_frame_equal(app.dataframe[0].value, expected_report)
+    assert app.dataframe[0].value.loc["weighted avg", "support"] == len(frame)
 
 
 @pytest.mark.parametrize("fault", ["empty", "missing", "extra", "one_class", "nan", "infinity", "text", "duplicate"])

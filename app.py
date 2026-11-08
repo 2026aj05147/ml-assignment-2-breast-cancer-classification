@@ -167,7 +167,12 @@ def main() -> None:
             labels, predictions, labels=[0, 1], target_names=["Benign", "Malignant"],
             output_dict=True, zero_division=0,
         )
-        st.dataframe(pd.DataFrame(report).T.round(4), use_container_width=True)
+        del report["accuracy"]
+        report_frame = pd.DataFrame.from_dict(report, orient="index").round(4)
+        report_frame.index.name = "Class or average"
+        report_frame["support"] = report_frame["support"].astype(int)
+        st.dataframe(report_frame, use_container_width=True)
+        st.caption("Overall accuracy is shown in the model evaluation above.")
     with data_tab:
         st.caption(f"Showing the first {min(len(frame), 20)} of {len(frame):,} uploaded rows.")
         st.dataframe(frame.head(20), hide_index=True, use_container_width=True)
