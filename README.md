@@ -49,7 +49,7 @@ would be necessary for stronger generalization claims.
 
 **GitHub repository:** https://github.com/2026aj05147/ml-assignment-2-breast-cancer-classification
 
-**Live Streamlit app:** pending deployment; insert the verified app URL here.
+**Live Streamlit app:** https://2026aj05147-ml-assignment.streamlit.app
 
 ### Repository layout
 
